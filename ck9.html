@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="js/jquery-3.1.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<!--<link rel="stylesheet" href="css/bootstrap.css">
+		<script src="js/bootstrap.js"></script>-->
+		<link rel="stylesheet" type="text/css" href="css/swiper.min.css"/>
+		<script src="js/swiper.min.js"></script>
+		<script src="js/iscroll-probe.js"></script>
+	</head>
+	<body>
+		<header>
+			<div><img src="img/mlogo-year.png" alt="" id="t1"></div>
+			<div><img src="img/fangdajing.png" alt="" id="t2"></div>
+		</header>
+		
+		<div class="swiper-container" id="main">
+			<div class="swiper-wrapper">
+				
+			
+			</div>
+			<div class="swiper-pagination" id="pag"></div>
+		</div>
+		
+		<div class="nav">
+			
+		</div>
+		
+		<div id="shangou">
+			<span id="sp1">闪购</span> <span id="sp2">·</span> <span id="sp3">限时限量，抢完为止</span>
+		</div>
+		
+		
+	<div id="box">
+		<main>
+			<div>
+				<img src="img/g.jpg" alt="" />
+				<img src="img/9.jpg" alt="" />
+				<p>6.5折</p>
+			</div>
+			
+			<div>
+				<img src="img/h.jpg" alt="" />
+				<img src="img/9.jpg" alt="" />
+				<p>6.5折</p>
+			</div>
+			
+			<div>
+				<img src="img/i.jpg" alt="" />
+				<img src="img/9.jpg" alt="" />
+				<p>6.5折</p>
+			</div>
+			
+			
+			
+			
+		</main>
+	</div>
+		
+		
+		<footer>
+			<div>
+				<img src="img/x1.png" alt="" />
+				<p>客服</p>
+			</div>
+			
+			<div>
+				<img src="img/x2.png" alt="" />
+				<p>首页</p>
+			</div>
+			
+			<div>
+				<img src="img/x3.png" alt="" />
+				<p>购物车</p>
+			</div>
+			
+			<div>
+				<img src="img/x4.png" alt="" />
+				<p>会员</p>
+			</div>
+		</footer>
+		
+	</body>
+	<script>
+		$.ajax({
+				url:"http://127.0.0.1:8080/a",
+				 
+				success:function(data){
+					var obj = JSON.parse(data)
+					
+					var str ="";
+					for(var i of obj.swiper){
+						str += '<div class="swiper-slide"><img src="img/'+i.scr+'"></div>'
+//							console.log(i.scr)
+					}
+					$('.swiper-wrapper').append(str)
+					
+					var swp = new Swiper("#main",{
+						pagination:".swiper-pagination",
+						loop:true,
+						autoplay:1000,
+					})
+					
+					
+					var str1 = "";
+					for(var j of obj.nav){
+						str1 += '<div><img src="img/'+j.scr+'" alt="" /><p>'+j.p+'</p></div>'
+		
+					}
+					$('.nav').append(str1)
+					
+				}
+			})
+		
+		var myis = new IScroll("#box",{
+			probeType:3
+		})
+		
+		var flag =0;
+		
+		myis.on("scroll",function(){
+			
+			if(this.y>10){
+				flag=1;
+				$("#shangou").html("【 松开刷新 】")
+				
+				
+			}
+			
+		})
+		var c = 1;
+		myis.on("scrollEnd",function(){
+			
+			if(flag==1){
+				$("#shangou").html("【 正在刷新··· 】")
+				setTimeout(function(){
+					
+					$("#shangou").html("<span id='sp1'>闪购</span> <span id='sp2'>·</span> <span id='sp3'>限时限量，抢完为止</span>")
+						  
+					$.ajax({
+							url:"http://127.0.0.1:8080/"+c,
+							success:function(data){
+								var obj = JSON.parse(data)
+								
+								var str2 = "";
+									for(var e of obj.tu){
+										str2 += 	'<div>'
+														+'<img src="img/'+e.img+'" alt="" />'
+														+'<img src="img/9.jpg" alt="" />'
+														+'<p>'+e.p+'</p>'
+													+'</div>'
+									}
+									$('main').html(str2)
+								}
+						})
+					
+						c++;
+						if(c>3){
+							c = 1;
+						}
+								
+					
+					myis.refresh()
+					flag=0;
+				},500)
+			}	
+		})
+		
+		
+		
+		
+		
+	</script>
+</html>
